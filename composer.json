@@ -37,13 +37,6 @@
       "url": "https://asset-packagist.org"
     }
 
-  ],
-  "autoload": {
-    "psr-4": {
-      "service\\": "service/",
-      "bot\\": "bot/"
-    }
-
-  }
+  ]
 }
 
