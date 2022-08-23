@@ -23,7 +23,6 @@
     "secure-http":false
   },
   "repositories": [
-
     {
       "type": "composer",
       "url": "https://mirrors.aliyun.com/composer/"
@@ -36,7 +35,16 @@
       "type": "composer",
       "url": "https://asset-packagist.org"
     }
+  ],
+    "autoload": {
+    "psr-4": {
+       "bot\\": "src/"
+    },
+    "files": [
+      "helper.php"
+    ]
 
-  ]
+  }
+
 }
 
