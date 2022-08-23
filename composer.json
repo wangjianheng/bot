@@ -1,0 +1,53 @@
+{
+  "name": "wangjianheng/rob",
+  "authors": [
+    {
+      "name": "wangjianheng",
+      "email": "wangjianheng@chuanyuapp.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "yiisoft/yii2": "~2.0.14",
+    "kaiheila/api": "dev-main",
+    "illuminate/support": "~8.0"
+  },
+  "config": {
+    "process-timeout": 1800,
+    "fxp-asset": {
+      "enabled": false
+    },
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true
+    },
+    "secure-http":false
+  },
+  "repositories": [
+
+    {
+      "type": "composer",
+      "url": "https://mirrors.aliyun.com/composer/"
+    },
+    {
+      "type": "composer",
+      "url": "https://packagist.phpcomposer.com/"
+    },
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+
+  ],
+  "autoload": {
+    "psr-4": {
+      "service\\": "service/",
+      "bot\\": "bot/"
+    },
+    "files": [
+      "helper.php",
+      "vendor/yiisoft/yii2/Yii.php"
+    ]
+
+  }
+}
+
