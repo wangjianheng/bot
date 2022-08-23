@@ -42,11 +42,7 @@
     "psr-4": {
       "service\\": "service/",
       "bot\\": "bot/"
-    },
-    "files": [
-      "helper.php",
-      "vendor/yiisoft/yii2/Yii.php"
-    ]
+    }
 
   }
 }
