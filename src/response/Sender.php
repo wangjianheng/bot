@@ -16,27 +16,10 @@ class Sender extends ApiHelper
 
     const JOINED_CHANNEL = self::AIP_VERSION . '/channel-user/get-joined-channel';
 
-    protected $user = [];
-
-    public function send($method = self::GET)
-    {
-        return parent::send($method);
-    }
-
     public function setPath($path)
     {
         $this->path = $path;
         return $this;
-    }
-
-    public function me($key = null)
-    {
-        if (empty($this->user)) {
-            $user = $this->setPath(self::USER_ME)->send(self::GET);
-            $this->user = $user['data'] ?? [];
-        }
-
-        return Arr::get($this->user, $key);
     }
 
 

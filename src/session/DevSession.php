@@ -15,6 +15,10 @@ class DevSession extends Session
     public function start()
     {
         $frames = array_map([Frame::class, 'getFromData'], Config::get('frame'));
-        array_walk($frames, [$this, 'receiveFrame']);
+        foreach ($frames as $frame) {
+            go(function () use ($frame) {
+                $this->receiveFrame($frame);
+            });
+        }
     }
 }

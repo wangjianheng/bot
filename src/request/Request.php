@@ -1,6 +1,7 @@
 <?php
 namespace bot\request;
 
+use bot\common\Sync;
 use Illuminate\Support\Arr;
 use \yii\base\Request as Base;
 use kaiheila\api\base\Frame;
@@ -14,10 +15,7 @@ class Request extends Base
      */
     public $router = null;
 
-    /**
-     * @var Frame
-     */
-    protected $frame = null;
+    protected $frame = 'frame';
 
     public $defaultType = 'default';
 
@@ -35,7 +33,8 @@ class Request extends Base
      */
     public function get($keys = null, $default = null)
     {
-        $data = $this->frame->d ?? [];
+        $data = Sync::map($this->frame) ?? Frame::getFromData([]);
+        $data = $data->d;
         if (is_null($keys)) {
             return $data;
         }
@@ -54,7 +53,7 @@ class Request extends Base
      */
     public function setFrame(Frame $frame)
     {
-        $this->frame = $frame;
+        Sync::map($this->frame, $frame);
         return $this;
     }
 

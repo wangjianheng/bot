@@ -1,13 +1,12 @@
 <?php
 namespace bot\application;
 
-use bot\command\CommandManager;
 use bot\common\RequestEvent;
 use bot\middleware\MiddleWare;
 use yii\base\Application;
-use bot\{common\LogDispatcher, ErrorHandler, session\Session};
+use bot\{common\LogDispatcher, common\Sync, ErrorHandler, http\Http, session\Session};
 use bot\request\{Router, Request};
-use bot\response\Response;
+use \yii\base\Response;
 use yii\log\Logger;
 use \Yii;
 
@@ -62,12 +61,15 @@ class BotApplication extends Application
 
         $this->requestedRoute = $route;
         $this->runAction($route, $params);
+
+        $this->trigger(self::EVENT_AFTER_REQUEST, $event);
     }
 
     public function run()
     {
         $this->botSession->on('PERSION_*', handleVal([$this, 'handleRequest'], [$this->errorHandler, 'handleException']));
         $this->botSession->on('GROUP_*', handleVal([$this, 'handleRequest'], [$this->errorHandler, 'handleException']));
+        $this->botSession->on('BROADCAST_*', handleVal([$this, 'handleRequest'], [$this->errorHandler, 'handleException']));
 
         $this->botSession->start();
     }
@@ -82,9 +84,10 @@ class BotApplication extends Application
             'router'       => ['class' => Router::class],
             'errorHandler' => ['class' => ErrorHandler::class],
             'response'     => ['class' => Response::class],
-            'command'      => ['class' => CommandManager::class],
             'middleware'   => ['class' => MiddleWare::class],
             'log'          => ['class' => LogDispatcher::class],
+            'http'         => ['class' => Http::class],
+            'sync'         => ['class' => Sync::class],
             'request'      => lazyComponent(Request::class, ['router' => 'router']),
         ]);
     }
@@ -95,7 +98,7 @@ class BotApplication extends Application
     protected function withBoot()
     {
         $this->bootstrap = array_merge($this->bootstrap, [
-            'log', 'middleware',
+            'log', 'middleware', 'sync',
         ]);
     }
 

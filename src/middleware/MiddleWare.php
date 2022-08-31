@@ -2,7 +2,6 @@
 
 namespace bot\middleware;
 
-use bot\command\CommandManager;
 use bot\common\Config;
 use bot\common\RequestEvent;
 use Illuminate\Support\Collection;
@@ -23,10 +22,7 @@ class MiddleWare implements BootstrapInterface, MiddleWareInterface
 
         //load
         $middleWare = array_merge(
-            Config::get('middle'),
-            [
-                CommandManager::class,
-            ]
+            Config::get('middle'), []
         );
 
         $this->middleWares = collect($middleWare)

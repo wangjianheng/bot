@@ -11,16 +11,6 @@ class Response extends Base
      */
     protected $sender;
 
-    public function __construct($config = [])
-    {
-        $this->sender = app(Sender::class, [
-            'path'    => '',
-            'token'   => Config::val('main.botSession.token'),
-            'baseUrl' => Config::val('main.botSession.baseUrl'),
-        ]);
-
-        parent::__construct($config);
-    }
 
     public function reply($msg)
     {
