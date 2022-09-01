@@ -12,6 +12,6 @@ class ErrorHandler extends Base
             $this->silentExitOnException = true;
         }
 
-        print_r($exception);
+        //print_r($exception);
     }
 }

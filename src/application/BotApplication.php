@@ -112,6 +112,9 @@ class BotApplication extends Application
 
         //controllers
         Yii::setAlias('@controllers', $this->basePath  . '/controllers');
+
+        //model
+        Yii::setAlias('@model', $this->basePath  . '/model');
     }
 
 }
