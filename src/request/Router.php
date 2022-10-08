@@ -1,9 +1,9 @@
 <?php
+
 namespace bot\request;
 
-use Illuminate\Support\Collection;
-use yii\base\BootstrapInterface;
 use bot\common\Config;
+use Illuminate\Support\Collection;
 
 class Router
 {
@@ -24,13 +24,12 @@ class Router
 
     /**
      * 根据信令类型转成路由
-     * @param Request $request
      * @return array
      */
     public function trans(Request $request)
     {
         $find = $this->routes->first(function ($route) use ($request) {
-            /**
+            /*
              * @var Route $route
              */
             return $route->match($request);
@@ -47,13 +46,13 @@ class Router
     {
         $this->routes = collect();
         foreach ($routes as $route => $path) {
-            if (is_array($path) && ! isset($path[0])) {
+            if (is_array($path) && !isset($path[0])) {
                 $this->load($path, $route);
                 continue;
             }
 
             $route = trim($group . '/' . $route, '/');
-            foreach ((array)$path as $p) {
+            foreach ((array) $path as $p) {
                 $this->routes->add(new Route($route, $p));
             }
         }

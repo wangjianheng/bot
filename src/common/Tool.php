@@ -2,7 +2,6 @@
 
 namespace bot\common;
 
-
 class Tool
 {
     /**
@@ -13,7 +12,7 @@ class Tool
      */
     public static function access($ins, $attr)
     {
-        return (function() use ($attr) {
+        return (function () use ($attr) {
             if ($attr instanceof \Closure) {
                 return $attr->call($this);
             }
@@ -26,24 +25,24 @@ class Tool
 
     /**
      * 是否为map
-     * @return boolean
+     * @return bool
      */
     public static function isMap($array)
     {
         $keys = array_keys($array);
-        return ! empty(
+        return !empty(
             array_filter($keys, 'is_string')
         );
     }
 
     /**
      * 是否为数组
-     * @return boolean
+     * @return bool
      */
     public static function isArr($array)
     {
         $keys = array_keys($array);
-        return ! empty(
+        return !empty(
         array_filter($keys, 'is_int')
         );
     }

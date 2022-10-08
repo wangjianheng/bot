@@ -2,7 +2,6 @@
 
 namespace bot\http;
 
-use Illuminate\Support\Arr;
 use kaiheila\api\helpers\ApiHelper;
 
 class Sender extends ApiHelper
@@ -114,7 +113,5 @@ class Sender extends ApiHelper
      */
     const CREATE_INVITE = self::AIP_VERSION . '/invite/create';     //创建邀请
 
-
     const SUCCESS_CODE = 0;
-
 }

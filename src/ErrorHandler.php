@@ -1,14 +1,14 @@
 <?php
+
 namespace bot;
 
 use bot\application\BotApplication;
-use \yii\base\ErrorHandler as Base;
 use Swoole\ExitException;
+use yii\base\ErrorHandler as Base;
 use yii\base\InvalidRouteException;
 
 class ErrorHandler extends Base
 {
-
     public function handleException($exception)
     {
         \Yii::$app->trigger(BotApplication::EVENT_AFTER_REQUEST);
@@ -19,7 +19,8 @@ class ErrorHandler extends Base
         }
     }
 
-    protected function renderException($exception){
+    protected function renderException($exception)
+    {
         switch (get_class($exception)) {
             case ExitException::class:
                 $this->silentExitOnException = true;
@@ -33,5 +34,7 @@ class ErrorHandler extends Base
         }
     }
 
-    public function unregister(){}
+    public function unregister()
+    {
+    }
 }

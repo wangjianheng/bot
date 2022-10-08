@@ -1,6 +1,6 @@
 <?php
 
-if (! function_exists('bot')) {
+if (!function_exists('bot')) {
     /**
      * @return \bot\application\BotApplication
      */
@@ -10,7 +10,7 @@ if (! function_exists('bot')) {
     }
 }
 
-if (! function_exists('http')) {
+if (!function_exists('http')) {
     /**
      * @return \bot\http\Http
      */
@@ -20,7 +20,7 @@ if (! function_exists('http')) {
     }
 }
 
-if (! function_exists('app')) {
+if (!function_exists('app')) {
     /**
      * @param string|array|callable $type the object type
      * @param array $params the constructor parameters
@@ -35,7 +35,7 @@ if (! function_exists('app')) {
     }
 }
 
-if (! function_exists('get')) {
+if (!function_exists('get')) {
     /**
      * 设置Component
      * @param string $abstract 类名
@@ -53,7 +53,7 @@ if (! function_exists('get')) {
     }
 }
 
-if (! function_exists('handleVal')) {
+if (!function_exists('handleVal')) {
     /**
      * 拦截空入参 并接异常
      * @param callable $callable 回调
@@ -62,8 +62,8 @@ if (! function_exists('handleVal')) {
      */
     function handleVal(callable $callable, $handler)
     {
-        return function($val) use ($callable, $handler) {
-            if (! $val) {
+        return function ($val) use ($callable, $handler) {
+            if (!$val) {
                 return null;
             }
 
@@ -76,7 +76,7 @@ if (! function_exists('handleVal')) {
     }
 }
 
-if (! function_exists('lazyComponent')) {
+if (!function_exists('lazyComponent')) {
     /**
      * 设置Component 优先尝试获取实例
      * @param string $abstract 类名
@@ -94,7 +94,7 @@ if (! function_exists('lazyComponent')) {
     }
 }
 
-if (! function_exists('request')) {
+if (!function_exists('request')) {
     /**
      * 获取request实例
      * @return \bot\request\Request

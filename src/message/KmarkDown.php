@@ -75,11 +75,11 @@ class KmarkDown extends Message
      */
     public function quote($content)
     {
-        if (! $this->isEmpty()) {
+        if (!$this->isEmpty()) {
             $this->push(PHP_EOL);
         }
 
-        return $this->push($content,  '> ');
+        return $this->push($content, '> ');
     }
 
     /**
@@ -160,7 +160,7 @@ class KmarkDown extends Message
      */
     public function codeBlock($lang, $content)
     {
-        if (! $this->isEmpty()) {
+        if (!$this->isEmpty()) {
             $this->push(PHP_EOL);
         }
 
@@ -198,11 +198,11 @@ class KmarkDown extends Message
     private function with($content, $begin)
     {
         $map = [
-            '['   => ']',
-            '('   => ')',
+            '[' => ']',
+            '(' => ')',
             '---' => '',
-            '> '  => PHP_EOL . PHP_EOL,
-            '\\'  => '',
+            '> ' => PHP_EOL . PHP_EOL,
+            '\\' => '',
         ];
 
         $end = Arr::get($map, $begin, $begin);

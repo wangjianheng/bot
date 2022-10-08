@@ -4,11 +4,20 @@ namespace bot\connection;
 
 use bot\common\Sync;
 use PDO;
+use Swoole\Database\PDOConfig;
+use Swoole\Database\PDOPool;
 use Yii;
+use yii\base\Component;
+use yii\base\InvalidConfigException;
+use yii\base\NotSupportedException;
 use yii\caching\CacheInterface;
-use yii\base\{Component, InvalidConfigException, NotSupportedException};
-use yii\db\{Command, Connection, Exception, QueryBuilder, Schema, TableSchema, Transaction};
-use \Swoole\Database\{PDOPool, PDOConfig};
+use yii\db\Command;
+use yii\db\Connection;
+use yii\db\Exception;
+use yii\db\QueryBuilder;
+use yii\db\Schema;
+use yii\db\TableSchema;
+use yii\db\Transaction;
 use yii\log\Logger;
 
 class PdoConnect extends Component
@@ -46,7 +55,7 @@ class PdoConnect extends Component
     const SYNC_KEY_TRANS = 'db__transaction';
 
     /**
-     * @var string $dsn
+     * @var string
      */
     public $dsn;
     /**
@@ -228,12 +237,12 @@ class PdoConnect extends Component
     public $enableProfiling = true;
 
     /**
-     * @var $masterPool PDOPool 主库连接池
+     * @var PDOPool 主库连接池
      */
     protected static $masterPool = null;
 
     /**
-     * @var $masterPool PDOPool 从库连接池
+     * @var PDOPool 从库连接池
      */
     protected static $slavePool = null;
 
@@ -319,7 +328,7 @@ class PdoConnect extends Component
         static::$initDone = true;
         $this->close();
 
-        /**
+        /*
          * 用完还回去
          */
         Yii::$app->on(Sync::EVENT_BEFORE_DELETE, [$this, 'putPdoBack']);
@@ -332,7 +341,7 @@ class PdoConnect extends Component
      */
     protected function buildConfig($connect)
     {
-        list(, $dsn) = explode(":", $connect->dsn, 2);
+        list(, $dsn) = explode(':', $connect->dsn, 2);
         $conf = collect(explode(';', $dsn))
             ->map(function ($item) {
                 return explode('=', $item);
@@ -379,7 +388,7 @@ class PdoConnect extends Component
 
     /**
      * 是否已经建立连接
-     * @return booL
+     * @return bool
      */
     public function getIsActive()
     {
@@ -682,7 +691,6 @@ class PdoConnect extends Component
 
     /**
      * 包在事务里 没问题commit 抛异常rollback
-     * @param callable $callback
      * @param string|null $isolationLevel 事务隔离级别
      * @throws \Throwable if there is any exception during query. In this case the transaction will be rolled back.
      * @return mixed result of callback function
@@ -888,7 +896,7 @@ class PdoConnect extends Component
     public function getDriverName()
     {
         if ($this->_driverName === null) {
-            if (($pos = strpos((string)$this->dsn, ':')) !== false) {
+            if (($pos = strpos((string) $this->dsn, ':')) !== false) {
                 $this->_driverName = strtolower(substr($this->dsn, 0, $pos));
             } else {
                 $this->_driverName = strtolower($this->getSlavePdo()->getAttribute(PDO::ATTR_DRIVER_NAME));
@@ -971,7 +979,6 @@ class PdoConnect extends Component
     /**
      * 可能会影响其他协程
      * 自己的用的时候注意不要在$callback里切就可以了
-     * @param callable $callback
      * @return mixed the return value of the callback
      * @throws \Throwable if there is any exception thrown from the callback
      */
@@ -1061,12 +1068,11 @@ class PdoConnect extends Component
             }
         }
 
-        /**
+        /*
          * 所有配置都不可用 尝试下缓存中被标记的配置
          */
         if ($cache instanceof CacheInterface) {
             foreach ($pool as $config) {
-
                 /* @var $db Connection */
                 $db = Yii::createObject($config);
                 try {
@@ -1109,7 +1115,7 @@ class PdoConnect extends Component
             return $pdo;
         }
 
-        if (! $pool = $this->pdoPool()) {
+        if (!$pool = $this->pdoPool()) {
             return null;
         }
 

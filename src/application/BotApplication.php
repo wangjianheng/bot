@@ -1,14 +1,22 @@
 <?php
+
 namespace bot\application;
 
+use bot\common\LogDispatcher;
 use bot\common\RequestEvent;
+use bot\common\Sync;
+use bot\ErrorHandler;
+use bot\http\Http;
+use bot\message\BotFrame;
+use bot\message\Card;
 use bot\middleware\MiddleWare;
+use bot\request\Request;
+use bot\request\Router;
+use bot\session\Session;
+use Yii;
 use yii\base\Application;
-use bot\{common\LogDispatcher, common\Sync, ErrorHandler, http\Http, message\BotFrame, message\Card, session\Session};
-use bot\request\{Router, Request};
-use \yii\base\Response;
+use yii\base\Response;
 use yii\log\Logger;
-use \Yii;
 
 /**
  * Class BotApplication
@@ -47,8 +55,8 @@ class BotApplication extends Application
         $frame = new BotFrame($frame);
         $event = app(RequestEvent::class, [], [
             'sender' => $this,
-            'name'   => self::EVENT_AFTER_REQUEST,
-            'frame'  => $frame,
+            'name' => self::EVENT_AFTER_REQUEST,
+            'frame' => $frame,
         ]);
 
         //中间件
@@ -87,15 +95,15 @@ class BotApplication extends Application
     public function coreComponents()
     {
         return array_merge(parent::coreComponents(), [
-            'router'       => ['class' => Router::class],
+            'router' => ['class' => Router::class],
             'errorHandler' => ['class' => ErrorHandler::class],
-            'response'     => ['class' => Response::class],
-            'middleware'   => ['class' => MiddleWare::class],
-            'log'          => ['class' => LogDispatcher::class],
-            'http'         => ['class' => Http::class],
-            'sync'         => ['class' => Sync::class],
-            'card'         => ['class' => Card::class],
-            'request'      => lazyComponent(Request::class, ['router' => 'router']),
+            'response' => ['class' => Response::class],
+            'middleware' => ['class' => MiddleWare::class],
+            'log' => ['class' => LogDispatcher::class],
+            'http' => ['class' => Http::class],
+            'sync' => ['class' => Sync::class],
+            'card' => ['class' => Card::class],
+            'request' => lazyComponent(Request::class, ['router' => 'router']),
         ]);
     }
 
@@ -126,5 +134,4 @@ class BotApplication extends Application
         //service
         Yii::setAlias('@service', $this->basePath  . '/service');
     }
-
 }

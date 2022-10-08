@@ -15,7 +15,7 @@ class Message
 
     const TYPE_CARD = 10;     //card
 
-    protected $type= self::TYPE_TEXT;
+    protected $type = self::TYPE_TEXT;
 
     /**
      * 发送渠道
@@ -29,7 +29,7 @@ class Message
     protected $items = [];
 
     /**
-     * @var string $msgId 发送的消息id
+     * @var string 发送的消息id
      */
     protected $msgId = null;
 
@@ -38,7 +38,9 @@ class Message
      */
     protected $channel = null;
 
-    public function __construct($params = null){}
+    public function __construct($params = null)
+    {
+    }
 
     /**
      * 发消息
@@ -52,7 +54,7 @@ class Message
     {
         //发到哪里
         $handle = $this->sendChannel('create', $channel);
-        if (! $handle) {
+        if (!$handle) {
             return [];
         }
 
@@ -76,24 +78,24 @@ class Message
         $handleMap = [
             'create' => [
                 self::SEND_CHANNEL => 'messageCreate',
-                self::SEND_CODE    => 'directMsgCreateByCode',
-                self::SEND_TARGET  => 'directMsgCreateByTarget',
+                self::SEND_CODE => 'directMsgCreateByCode',
+                self::SEND_TARGET => 'directMsgCreateByTarget',
             ],
 
             'update' => [
                 self::SEND_CHANNEL => 'messageUpdate',
-                self::SEND_CODE    => 'directMsgUpdate',
-                self::SEND_TARGET  => 'directMsgUpdate',
+                self::SEND_CODE => 'directMsgUpdate',
+                self::SEND_TARGET => 'directMsgUpdate',
             ],
 
             'delete' => [
                 self::SEND_CHANNEL => 'messageDelete',
-                self::SEND_CODE    => 'directMsgDelete',
-                self::SEND_TARGET  => 'directMsgDelete',
+                self::SEND_CODE => 'directMsgDelete',
+                self::SEND_TARGET => 'directMsgDelete',
             ],
         ];
 
-        if (! $channel || ! $handle = Arr::get($handleMap, "{$oper}.{$channel}")) {
+        if (!$channel || !$handle = Arr::get($handleMap, "{$oper}.{$channel}")) {
             return null;
         }
 
@@ -123,9 +125,9 @@ class Message
     public function update($properties = [])
     {
         if (
-            ! $this->msgId ||
-            ! in_array($this->type, [self::KMARK_DOWN, self::TYPE_CARD]) ||
-            ! $handle = $this->sendChannel('update', $this->channel)
+            !$this->msgId ||
+            !in_array($this->type, [self::KMARK_DOWN, self::TYPE_CARD]) ||
+            !$handle = $this->sendChannel('update', $this->channel)
         ) {
             return [];
         }
@@ -135,14 +137,14 @@ class Message
 
     /**
      * 删除
-     * @return boolean
+     * @return bool
      * @throws \Exception
      */
     public function delete()
     {
         if (
-            ! $msg = $this->msgId ||
-            ! $handle = $this->sendChannel('delete', $this->channel)
+            !$msg = $this->msgId ||
+            !$handle = $this->sendChannel('delete', $this->channel)
         ) {
             return true;
         }
@@ -177,7 +179,7 @@ class Message
      */
     public static function content($msg)
     {
-        if($msg instanceof Message) {
+        if ($msg instanceof Message) {
             return $msg->out();
         }
 
@@ -234,9 +236,7 @@ class Message
     /**
      * 发送后钩子
      */
-    public function afterSend($newMsg){}
-
-
-
-
+    public function afterSend($newMsg)
+    {
+    }
 }

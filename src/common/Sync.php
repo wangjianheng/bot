@@ -3,12 +3,12 @@
 namespace bot\common;
 
 use Illuminate\Support\Arr;
-use \Swoole\Coroutine;
+use Swoole\Coroutine;
+use Swoole\Timer;
+use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
-use \Swoole\Timer;
-use \Yii;
 
 class Sync implements BootstrapInterface
 {
@@ -27,7 +27,7 @@ class Sync implements BootstrapInterface
      * 存储服务 实现get set就行
      * 默认就存到变量里了 用起来最方便 什么都可以存 只是受局限MAX_ITEMS
      * 如果放到reids或则db 回调方法只能是静态函数了
-     * @var Sync $store
+     * @var Sync
      */
     protected static $store;
 
@@ -69,8 +69,8 @@ class Sync implements BootstrapInterface
     public static function del()
     {
         $event = [
-            'class'  => Event::class,
-            'name'   => self::EVENT_BEFORE_DELETE,
+            'class' => Event::class,
+            'name' => self::EVENT_BEFORE_DELETE,
             'sender' => Sync::class,
         ];
 
@@ -99,7 +99,7 @@ class Sync implements BootstrapInterface
     public static function call($key, $params)
     {
         if ($callable = static::$store->get($key)) {
-            return call_user_func_array($callable, (array)$params);
+            return call_user_func_array($callable, (array) $params);
         }
     }
 
@@ -111,7 +111,7 @@ class Sync implements BootstrapInterface
      */
     public function get($key, $default = null)
     {
-        if (! isset(static::$storeData[$key])) {
+        if (!isset(static::$storeData[$key])) {
             return $default;
         }
 
@@ -151,5 +151,4 @@ class Sync implements BootstrapInterface
             return $time >= time();
         });
     }
-
 }

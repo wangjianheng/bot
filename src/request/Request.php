@@ -1,4 +1,5 @@
 <?php
+
 namespace bot\request;
 
 use bot\common\Sync;
@@ -78,7 +79,6 @@ class Request extends Base
 
     /**
      * 设置frame
-     * @param BotFrame $frame
      * @return $this
      */
     public function setFrame(BotFrame $frame)
@@ -93,7 +93,7 @@ class Request extends Base
      */
     public function requestType()
     {
-        /**
+        /*
          * 渠道&类型
          * 非系统消息(255) 取extra.type
          */
@@ -102,7 +102,7 @@ class Request extends Base
             $type = $extraType;
         }
 
-        if (! $channel || ! $type) {
+        if (!$channel || !$type) {
             return $this->defaultType;
         }
 

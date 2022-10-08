@@ -1,4 +1,5 @@
 <?php
+
 namespace bot\common\traits;
 
 use Illuminate\Support\Arr;
@@ -31,7 +32,4 @@ trait AsArray
     {
         return $this->{$this->access};
     }
-
 }
-
-

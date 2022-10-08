@@ -5,9 +5,9 @@ namespace bot\message;
 use bot\common\RequestEvent;
 use bot\common\Sync;
 use Illuminate\Support\Arr;
+use Swoole\Timer;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
-use Swoole\Timer;
 
 /**
  * Class Card
@@ -55,7 +55,7 @@ class Card extends Message implements BootstrapInterface
 
     /**
      * 卡片信息包含多个卡片 都保存到这里 渲染的时候把$this也push到这里
-     * @var array $nodes
+     * @var array
      */
     protected $nodes = [];
 
@@ -88,7 +88,7 @@ class Card extends Message implements BootstrapInterface
     protected $voteCallBack = null;
 
     /**
-     * @var array $buttonCallBack 按钮回调事件（临时存一下）
+     * @var array 按钮回调事件（临时存一下）
      */
     protected $buttonCallBackTmp = [];
 
@@ -164,7 +164,7 @@ class Card extends Message implements BootstrapInterface
     {
         //旋转
         $turn = [];
-        for ($i=0; $i<count($items[0]); $i++) {
+        for ($i = 0; $i < count($items[0]); $i++) {
             $col = array_map([Message::class, 'content'], Arr::pluck($items, $i));
             array_push($turn, $col);
         }
@@ -172,18 +172,18 @@ class Card extends Message implements BootstrapInterface
         //拼回车
         $turn = array_map(function ($item) {
             return [
-                'type'     => 'kmarkdown',
-                'content'  => join(PHP_EOL, $item)
+                'type' => 'kmarkdown',
+                'content' => join(PHP_EOL, $item),
             ];
         }, $turn);
 
         return  $this->push([
-            'type'   => self::TYPE_SECTION,
+            'type' => self::TYPE_SECTION,
             'text' => [
-                'type'  => self::TYPE_PARAGRAPH,
-                'cols'   => count($turn),
+                'type' => self::TYPE_PARAGRAPH,
+                'cols' => count($turn),
                 'fields' => $turn,
-            ]
+            ],
         ]);
     }
 
@@ -197,10 +197,10 @@ class Card extends Message implements BootstrapInterface
     public function textWithImg($content, $img, $mode = 'right')
     {
         return $this->push([
-            'type'      => self::TYPE_SECTION,
-            'text'      => static::eText($content),
-            "accessory" => static::eImg($img),
-            'mode'      => $mode,
+            'type' => self::TYPE_SECTION,
+            'text' => static::eText($content),
+            'accessory' => static::eImg($img),
+            'mode' => $mode,
         ]);
     }
 
@@ -214,10 +214,10 @@ class Card extends Message implements BootstrapInterface
     public function textWithButton($content, $button, $mode = 'right')
     {
         return $this->push([
-            'type'      => self::TYPE_SECTION,
-            'text'      => static::eText($content),
-            "accessory" => static::registerButtonCallback($button),
-            'mode'      => $mode,
+            'type' => self::TYPE_SECTION,
+            'text' => static::eText($content),
+            'accessory' => static::registerButtonCallback($button),
+            'mode' => $mode,
         ]);
     }
 
@@ -229,8 +229,8 @@ class Card extends Message implements BootstrapInterface
     public function images($images)
     {
         return $this->push([
-            'type'     => self::TYPE_IMAGE_GROUP,
-            'elements' => array_map([static::class, 'eImg'], (array)$images),
+            'type' => self::TYPE_IMAGE_GROUP,
+            'elements' => array_map([static::class, 'eImg'], (array) $images),
         ]);
     }
 
@@ -250,7 +250,7 @@ class Card extends Message implements BootstrapInterface
         }
 
         return $this->push(
-            static::eActionGroup(array_map([$this, 'registerButtonCallback'], (array)$buttons))
+            static::eActionGroup(array_map([$this, 'registerButtonCallback'], (array) $buttons))
         );
     }
 
@@ -281,7 +281,7 @@ class Card extends Message implements BootstrapInterface
     public function remarks($elements)
     {
         return $this->push([
-            'type'     => self::TYPE_CONTEXT,
+            'type' => self::TYPE_CONTEXT,
             'elements' => $elements,
         ]);
     }
@@ -296,10 +296,10 @@ class Card extends Message implements BootstrapInterface
     public function file($title, $url, $size)
     {
         return $this->push([
-            'type'     => self::TYPE_FILE,
+            'type' => self::TYPE_FILE,
             'title' => $title,
-            'size'  => $size,
-            'src'  => $url,
+            'size' => $size,
+            'src' => $url,
         ]);
     }
 
@@ -313,10 +313,10 @@ class Card extends Message implements BootstrapInterface
     public function audio($title, $url, $cover)
     {
         return $this->push([
-            'type'  => self::TYPE_AUDIO,
+            'type' => self::TYPE_AUDIO,
             'title' => $title,
             'cover' => $cover,
-            'src'   => $url,
+            'src' => $url,
         ]);
     }
 
@@ -329,9 +329,9 @@ class Card extends Message implements BootstrapInterface
     public function video($title, $url)
     {
         return $this->push([
-            'type'  => self::TYPE_VIDEO,
+            'type' => self::TYPE_VIDEO,
             'title' => $title,
-            'src'   => $url,
+            'src' => $url,
         ]);
     }
 
@@ -343,8 +343,8 @@ class Card extends Message implements BootstrapInterface
     public function countDownDay($end)
     {
         return $this->push([
-            'type'    => self::TYPE_COUNT_DOWN,
-            'mode'    => 'day',
+            'type' => self::TYPE_COUNT_DOWN,
+            'mode' => 'day',
             'endTime' => $end,
         ]);
     }
@@ -357,8 +357,8 @@ class Card extends Message implements BootstrapInterface
     public function countDownHour($end)
     {
         return $this->push([
-            'type'    => self::TYPE_COUNT_DOWN,
-            'mode'    => 'hour',
+            'type' => self::TYPE_COUNT_DOWN,
+            'mode' => 'hour',
             'endTime' => $end,
         ]);
     }
@@ -376,10 +376,10 @@ class Card extends Message implements BootstrapInterface
         $callback and $this->downSecondCall[$end - $start] = $callback;
 
         return $this->push([
-            'type'      => self::TYPE_COUNT_DOWN,
-            'mode'      => 'second',
+            'type' => self::TYPE_COUNT_DOWN,
+            'mode' => 'second',
             'startTime' => $start,
-            'endTime'   => $end,
+            'endTime' => $end,
         ]);
     }
 
@@ -404,8 +404,8 @@ class Card extends Message implements BootstrapInterface
     public static function eContainer($images)
     {
         return [
-            'type'     => self::TYPE_CONTAINER,
-            'elements' => array_map([static::class, 'eImg'], (array)$images),
+            'type' => self::TYPE_CONTAINER,
+            'elements' => array_map([static::class, 'eImg'], (array) $images),
         ];
     }
 
@@ -425,7 +425,7 @@ class Card extends Message implements BootstrapInterface
     public static function eText($content)
     {
         return [
-            'type'    => self::TYPE_PLAIN,
+            'type' => self::TYPE_PLAIN,
             'content' => $content,
         ];
     }
@@ -439,7 +439,7 @@ class Card extends Message implements BootstrapInterface
     {
         return [
             'type' => self::TYPE_IMAGE,
-            'src'  => $src,
+            'src' => $src,
         ];
     }
 
@@ -448,7 +448,7 @@ class Card extends Message implements BootstrapInterface
         return [
             'type' => self::TYPE_SECTION,
             'text' => [
-                'type'    => self::TYPE_KMARKDOWN,
+                'type' => self::TYPE_KMARKDOWN,
                 'content' => $kmarkDown->out(),
             ],
         ];
@@ -457,7 +457,7 @@ class Card extends Message implements BootstrapInterface
     public static function eActionGroup($elements)
     {
         return [
-            'type'     => self::TYPE_ACTION_GROUP,
+            'type' => self::TYPE_ACTION_GROUP,
             'elements' => $elements,
         ];
     }
@@ -475,13 +475,13 @@ class Card extends Message implements BootstrapInterface
             return $content;
         }
 
-        isset($properties['value']) and $properties['value'] = (string)$properties['value'];
+        isset($properties['value']) and $properties['value'] = (string) $properties['value'];
 
         $callback and $properties['click'] = 'return-val';
         $button = array_merge(
             [
-                'type'     => self::TYPE_BUTTON,
-                'text'     => static::eText($content),
+                'type' => self::TYPE_BUTTON,
+                'text' => static::eText($content),
                 'callback' => $callback,
             ],
             $properties
@@ -550,7 +550,7 @@ class Card extends Message implements BootstrapInterface
         }
 
         //没有这个选项
-        if (! isset($this->voteOptions[$frame->value()])) {
+        if (!isset($this->voteOptions[$frame->value()])) {
             return;
         }
 
@@ -591,10 +591,10 @@ class Card extends Message implements BootstrapInterface
     {
         $cards = array_map(function ($card) {
             return [
-                'type'    => self::TYPE_CARD,
-                'theme'   => $this->theme,
-                'size'    => $this->size,
-                'color'   => $this->color,
+                'type' => self::TYPE_CARD,
+                'theme' => $this->theme,
+                'size' => $this->size,
+                'color' => $this->color,
                 'modules' => array_values($card->items),
             ];
         }, $this->cards());
@@ -629,5 +629,4 @@ class Card extends Message implements BootstrapInterface
         $msgId = Arr::get($event->frame, 'extra.body.msg_id');
         Sync::call($msgId, [$event->frame]);
     }
-
 }

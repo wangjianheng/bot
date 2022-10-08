@@ -3,10 +3,10 @@
 namespace bot\http;
 
 use bot\common\Config;
+use bot\message\Message;
 use Illuminate\Support\Arr;
 use kaiheila\api\helpers\ApiHelper;
 use yii\base\Behavior;
-use bot\message\Message;
 
 class Http extends Behavior
 {
@@ -39,11 +39,11 @@ class Http extends Behavior
         /**
          * @var $sender ApiHelper
          */
-        $sender =  app(Sender::class, [
-            'token'    => $this->token,
-            'baseUrl'  => $this->baseUrl,
-            'path'     => $path,
-            'type'     => $type,
+        $sender = app(Sender::class, [
+            'token' => $this->token,
+            'baseUrl' => $this->baseUrl,
+            'path' => $path,
+            'type' => $type,
             'language' => $language,
         ]);
 
@@ -60,8 +60,8 @@ class Http extends Behavior
     {
         $body = [
             'target_id' => request()->get('target_id'),
-            'content'   => $msg,
-            'quote'     => request()->get('msg_id'),
+            'content' => $msg,
+            'quote' => request()->get('msg_id'),
         ];
         return $this->sender(Sender::MESSAGE_CREATE)->setBody($body)->send(Sender::POST);
     }
@@ -93,9 +93,9 @@ class Http extends Behavior
     public function guildList($page = 1, $size = 10, $sort = 'id')
     {
         $body = [
-            'page'      => $page,
+            'page' => $page,
             'page_size' => $size,
-            'sort'      => $sort,
+            'sort' => $sort,
         ];
 
         $response = $this->sender(Sender::GUILD_LIST)->setQuery($body)->send(Sender::GET);
@@ -132,8 +132,8 @@ class Http extends Behavior
     {
         $body = array_merge(
             [
-                'guild_id'  => $guild,
-                'page'      => $page,
+                'guild_id' => $guild,
+                'page' => $page,
                 'page_size' => $size,
             ],
             $condition
@@ -155,7 +155,7 @@ class Http extends Behavior
     {
         $body = [
             'guild_id' => $guild,
-            'user_id'  => $user,
+            'user_id' => $user,
             'nickname' => $nickname,
         ];
 
@@ -189,7 +189,7 @@ class Http extends Behavior
     public function kickOut($guild, $target)
     {
         $body = [
-            'guild_id'  => $guild,
+            'guild_id' => $guild,
             'target_id' => $target,
         ];
 
@@ -207,7 +207,7 @@ class Http extends Behavior
     public function muteList($guild, $ret = 'detail')
     {
         $body = [
-            'guild_id'    => $guild,
+            'guild_id' => $guild,
             'return_type' => $ret,
         ];
 
@@ -227,8 +227,8 @@ class Http extends Behavior
     {
         $body = [
             'guild_id' => $guild,
-            'user_id'  => $user,
-            'type'     => $type,
+            'user_id' => $user,
+            'type' => $type,
         ];
 
         $response = $this->sender(Sender::MUTE_CREATE)->setBody($body)->send(Sender::POST);
@@ -247,8 +247,8 @@ class Http extends Behavior
     {
         $body = [
             'guild_id' => $guild,
-            'user_id'  => $user,
-            'type'     => $type,
+            'user_id' => $user,
+            'type' => $type,
         ];
 
         $response = $this->sender(Sender::MUTE_DELETE)->setBody($body)->send(Sender::POST);
@@ -267,9 +267,9 @@ class Http extends Behavior
     public function channelList($guild, $type = 1, $page = 1, $size = 10)
     {
         $body = [
-            'guild_id'  => $guild,
-            'type'      => $type,
-            'page'      => $page,
+            'guild_id' => $guild,
+            'type' => $type,
+            'page' => $page,
             'page_size' => $size,
         ];
 
@@ -286,7 +286,7 @@ class Http extends Behavior
     public function channelView($target)
     {
         $body = [
-            'target_id'  => $target
+            'target_id' => $target,
         ];
 
         $response = $this->sender(Sender::CHANNEL_VIEW)->setQuery($body)->send(Sender::GET);
@@ -306,7 +306,7 @@ class Http extends Behavior
         $body = array_merge(
             [
                 'guild_id' => $guild,
-                'name'     => $name,
+                'name' => $name,
             ],
             $properties
         );
@@ -378,7 +378,7 @@ class Http extends Behavior
     {
         $body = [
             'target_id' => $target,
-            'user_ids'  => $users,
+            'user_ids' => $users,
         ];
 
         $response = $this->sender(Sender::CHANNEL_MOVE_USER)->setBody($body)->send(Sender::POST);
@@ -413,8 +413,8 @@ class Http extends Behavior
     {
         $body = [
             'channel_id' => $channel,
-            'value'      => $value,
-            'type'       => $type,
+            'value' => $value,
+            'type' => $type,
         ];
 
         $response = $this->sender(Sender::CHANNEL_ROLE_CREATE)->setBody($body)->send(Sender::POST);
@@ -433,10 +433,10 @@ class Http extends Behavior
     {
         $body = [
             'channel_id' => $channel,
-            'value'      => $value,
-            'type'       => $type,
-            'allow'      => $allow,
-            'deny'       => $deny,
+            'value' => $value,
+            'type' => $type,
+            'allow' => $allow,
+            'deny' => $deny,
         ];
 
         $response = $this->sender(Sender::CHANNEL_ROLE_UPDATE)->setBody($body)->send(Sender::POST);
@@ -455,8 +455,8 @@ class Http extends Behavior
     {
         $body = [
             'channel_id' => $channel,
-            'value'      => $value,
-            'type'       => $type,
+            'value' => $value,
+            'type' => $type,
         ];
 
         $response = $this->sender(Sender::CHANNEL_ROLE_DELETE)->setBody($body)->send(Sender::POST);
@@ -497,7 +497,7 @@ class Http extends Behavior
         $body = array_merge(
             [
                 'target_id' => $targe,
-                'content'   => $content,
+                'content' => $content,
             ],
             $properties
         );
@@ -518,7 +518,7 @@ class Http extends Behavior
     {
         $body = array_merge(
             [
-                'msg_id'  => $msgid,
+                'msg_id' => $msgid,
                 'content' => $content,
             ],
             $properties
@@ -531,7 +531,7 @@ class Http extends Behavior
     /**
      * 修改消息
      * @param string $msgid 消息id
-     * @return boolean
+     * @return bool
      * @throws \Exception
      */
     public function messageDelete($msgid)
@@ -555,7 +555,7 @@ class Http extends Behavior
     {
         $body = [
             'msg_id' => $msgid,
-            'emoji'  => $emoji,
+            'emoji' => $emoji,
         ];
 
         $response = $this->sender(Sender::REACTION_LIST)->setQuery($body)->send(Sender::GET);
@@ -566,14 +566,14 @@ class Http extends Behavior
      * 添加回应
      * @param string $msgid 消息id
      * @param string $emoji 表情id
-     * @return boolean
+     * @return bool
      * @throws \Exception
      */
     public function addReaction($msgid, $emoji)
     {
         $body = [
             'msg_id' => $msgid,
-            'emoji'  => $emoji,
+            'emoji' => $emoji,
         ];
 
         $response = $this->sender(Sender::REACTION_ADD)->setBody($body)->send(Sender::POST);
@@ -585,14 +585,14 @@ class Http extends Behavior
      * @param string $msgid 消息id
      * @param string $emoji 表情id
      * @param string $user 用户
-     * @return boolean
+     * @return bool
      * @throws \Exception
      */
     public function delReaction($msgid, $emoji, $user = null)
     {
         $body = [
-            'msg_id'  => $msgid,
-            'emoji'   => $emoji,
+            'msg_id' => $msgid,
+            'emoji' => $emoji,
             'user_id' => $user,
         ];
 
@@ -611,7 +611,7 @@ class Http extends Behavior
     {
         $body = [
             'guild_id' => $guild,
-            'user_id'  => $user,
+            'user_id' => $user,
         ];
 
         $response = $this->sender(Sender::JOINED_CHANNEL)->setQuery($body)->send(Sender::GET);
@@ -666,7 +666,7 @@ class Http extends Behavior
     /**
      * 删除会话
      * @param string $code 会话code
-     * @return boolean
+     * @return bool
      * @throws \Exception
      */
     public function chatDelete($code)
@@ -691,7 +691,7 @@ class Http extends Behavior
         $body = array_merge(
             [
                 'chat_code' => $code,
-                'page'      => $page,
+                'page' => $page,
                 'page_size' => $size,
             ],
             $properties
@@ -713,7 +713,7 @@ class Http extends Behavior
         $body = array_merge(
             [
                 'target_id' => $targe,
-                'page'      => $page,
+                'page' => $page,
                 'page_size' => $size,
             ],
             $properties
@@ -736,7 +736,7 @@ class Http extends Behavior
         $body = array_merge(
             [
                 'target_id' => $targe,
-                'content'   => $content,
+                'content' => $content,
             ],
             $properties
         );
@@ -758,7 +758,7 @@ class Http extends Behavior
         $body = array_merge(
             [
                 'chat_code' => $code,
-                'content'   => $content,
+                'content' => $content,
             ],
             $properties
         );
@@ -772,14 +772,14 @@ class Http extends Behavior
      * @param string $msg 消息
      * @param string $content 内容
      * @param  array $properties 其他
-     * @return boolean
+     * @return bool
      * @throws \Exception
      */
     public function directMsgUpdate($msg, $content, $properties = [])
     {
         $body = array_merge(
             [
-                'msg_id'  => $msg,
+                'msg_id' => $msg,
                 'content' => $content,
             ],
             $properties
@@ -794,7 +794,7 @@ class Http extends Behavior
      * @param string $msg 消息
      * @param string $content 内容
      * @param  array $properties 其他
-     * @return boolean
+     * @return bool
      * @throws \Exception
      */
     public function directMsgDelete($msg)
@@ -811,14 +811,14 @@ class Http extends Behavior
      * 添加回应
      * @param string $msg 消息
      * @param string $emoji 表情
-     * @return boolean
+     * @return bool
      * @throws \Exception
      */
     public function directMsgAddReaction($msg, $emoji)
     {
         $body = [
             'msg_id' => $msg,
-            'emoji'  => $emoji,
+            'emoji' => $emoji,
         ];
 
         $response = $this->sender(Sender::DIRECT_MESSAGE_ADD_REACTION)->setBody($body)->send(Sender::POST);
@@ -830,14 +830,14 @@ class Http extends Behavior
      * @param string $msg 消息
      * @param string $emoji 表情
      * @param string $user 用户
-     * @return boolean
+     * @return bool
      * @throws \Exception
      */
     public function directMsgDelReaction($msg, $emoji, $user = null)
     {
         $body = [
-            'msg_id'  => $msg,
-            'emoji'   => $emoji,
+            'msg_id' => $msg,
+            'emoji' => $emoji,
             'user_id' => $user,
         ];
 
@@ -849,13 +849,13 @@ class Http extends Behavior
      * 目标用户
      * @param string $guild 服务器
      * @param string $user 用户
-     * @return boolean
+     * @return bool
      * @throws \Exception
      */
     public function userView($user, $guild = null)
     {
         $body = [
-            'user_id'  => $user,
+            'user_id' => $user,
             'guild_id' => $guild,
         ];
 
@@ -865,7 +865,7 @@ class Http extends Behavior
 
     /**
      * 下线
-     * @return boolean
+     * @return bool
      * @throws \Exception
      */
     public function offLine()
@@ -879,8 +879,8 @@ class Http extends Behavior
     public function channelInvite($channel, $duration = null, $times = -1)
     {
         $body = [
-            'channel_id'    => $channel,
-            'duration'      => $duration,
+            'channel_id' => $channel,
+            'duration' => $duration,
             'setting_times' => $times,
         ];
         $response = $this->sender(Sender::CREATE_INVITE)->setBody($body)->send(Sender::POST);
@@ -891,8 +891,8 @@ class Http extends Behavior
     public function guildInvite($channel, $duration = 1800, $times = -1)
     {
         $body = [
-            'guild_id'      => $channel,
-            'duration'      => $duration,
+            'guild_id' => $channel,
+            'duration' => $duration,
             'setting_times' => $times,
         ];
         $response = $this->sender(Sender::CREATE_INVITE)->setBody($body)->send(Sender::POST);
@@ -902,7 +902,7 @@ class Http extends Behavior
     /**
      * 是否成功
      * @param array $response 接口相应
-     * @return boolean
+     * @return bool
      */
     protected function isSuccess($response)
     {
