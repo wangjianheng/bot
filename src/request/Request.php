@@ -2,12 +2,16 @@
 namespace bot\request;
 
 use bot\common\Sync;
+use bot\message\BotFrame;
 use Illuminate\Support\Arr;
-use \yii\base\Request as Base;
-use kaiheila\api\base\Frame;
+use yii\console\Request as Base;
 
 class Request extends Base
 {
+    const TEXT_TYPE = 1;
+
+    const KMARKDOWN_TYPE = 9;
+
     const OTHER_TYPE = 255;
 
     /**
@@ -21,9 +25,27 @@ class Request extends Base
 
     public function resolve()
     {
-        $path = $this->router->trans($this);
+        //文字走console
+        if (in_array($this->get('type'), [self::TEXT_TYPE, self::KMARKDOWN_TYPE])) {
+            return parent::resolve();
+        }
 
-        return [$path, []];
+        //其他事件走router
+        return $this->router->trans($this);
+    }
+
+    /**
+     * 仅console走这个方法
+     * @return array|void
+     */
+    public function getParams()
+    {
+        $content = $this->get('content');
+        $params = explode(' ', $content);
+
+        return array_filter(
+            array_map('trim', $params)
+        );
     }
 
     /**
@@ -33,8 +55,7 @@ class Request extends Base
      */
     public function get($keys = null, $default = null)
     {
-        $data = Sync::map($this->frame) ?? Frame::getFromData([]);
-        $data = $data->d;
+        $data = $this->frame()->d;
         if (is_null($keys)) {
             return $data;
         }
@@ -47,11 +68,20 @@ class Request extends Base
     }
 
     /**
+     * 获取frame
+     * @return BotFrame $frame
+     */
+    public function frame()
+    {
+        return Sync::map($this->frame) ?? new BotFrame();
+    }
+
+    /**
      * 设置frame
-     * @param Frame $frame
+     * @param BotFrame $frame
      * @return $this
      */
-    public function setFrame(Frame $frame)
+    public function setFrame(BotFrame $frame)
     {
         Sync::map($this->frame, $frame);
         return $this;

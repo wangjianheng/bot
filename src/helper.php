@@ -1,5 +1,25 @@
 <?php
 
+if (! function_exists('bot')) {
+    /**
+     * @return \bot\application\BotApplication
+     */
+    function bot()
+    {
+        return Yii::$app;
+    }
+}
+
+if (! function_exists('http')) {
+    /**
+     * @return \bot\http\Http
+     */
+    function http()
+    {
+        return bot()->http;
+    }
+}
+
 if (! function_exists('app')) {
     /**
      * @param string|array|callable $type the object type
@@ -26,13 +46,12 @@ if (! function_exists('get')) {
     function get($id)
     {
         try {
-            return Yii::$app->get($id) ?? $id;
+            return bot()->get($id) ?? $id;
         } catch (Exception $e) {
             return $id;
         }
     }
 }
-
 
 if (! function_exists('handleVal')) {
     /**
@@ -82,6 +101,6 @@ if (! function_exists('request')) {
      */
     function request()
     {
-        return Yii::$app->request;
+        return bot()->request;
     }
 }

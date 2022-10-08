@@ -25,7 +25,7 @@ class Router
     /**
      * 根据信令类型转成路由
      * @param Request $request
-     * @return string
+     * @return array
      */
     public function trans(Request $request)
     {
@@ -36,7 +36,8 @@ class Router
             return $route->match($request);
         });
 
-        return $find->path ?? null;
+        $path = $find->path ?? null;
+        return [$path, []];
     }
 
     /**

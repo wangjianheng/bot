@@ -4,12 +4,17 @@ namespace bot\application;
 use bot\common\RequestEvent;
 use bot\middleware\MiddleWare;
 use yii\base\Application;
-use bot\{common\LogDispatcher, common\Sync, ErrorHandler, http\Http, session\Session};
+use bot\{common\LogDispatcher, common\Sync, ErrorHandler, http\Http, message\BotFrame, message\Card, session\Session};
 use bot\request\{Router, Request};
 use \yii\base\Response;
 use yii\log\Logger;
 use \Yii;
 
+/**
+ * Class BotApplication
+ * @package bot\application
+ * @property Http $http 向服务器发送请求
+ */
 class BotApplication extends Application
 {
     /**
@@ -39,6 +44,7 @@ class BotApplication extends Application
          * before request event
          * @var $event RequestEvent
          */
+        $frame = new BotFrame($frame);
         $event = app(RequestEvent::class, [], [
             'sender' => $this,
             'name'   => self::EVENT_AFTER_REQUEST,
@@ -67,9 +73,9 @@ class BotApplication extends Application
 
     public function run()
     {
-        $this->botSession->on('PERSION_*', handleVal([$this, 'handleRequest'], [$this->errorHandler, 'handleException']));
-        $this->botSession->on('GROUP_*', handleVal([$this, 'handleRequest'], [$this->errorHandler, 'handleException']));
-        $this->botSession->on('BROADCAST_*', handleVal([$this, 'handleRequest'], [$this->errorHandler, 'handleException']));
+        $this->botSession->on(BotFrame::TYPE_GROUP . '_*', handleVal([$this, 'handleRequest'], [$this->errorHandler, 'handleException']));
+        $this->botSession->on(BotFrame::TYPE_PERSION . '_*', handleVal([$this, 'handleRequest'], [$this->errorHandler, 'handleException']));
+        $this->botSession->on(BotFrame::TYPE_BROADCAST . '_*', handleVal([$this, 'handleRequest'], [$this->errorHandler, 'handleException']));
 
         $this->botSession->start();
     }
@@ -88,6 +94,7 @@ class BotApplication extends Application
             'log'          => ['class' => LogDispatcher::class],
             'http'         => ['class' => Http::class],
             'sync'         => ['class' => Sync::class],
+            'card'         => ['class' => Card::class],
             'request'      => lazyComponent(Request::class, ['router' => 'router']),
         ]);
     }
@@ -98,7 +105,7 @@ class BotApplication extends Application
     protected function withBoot()
     {
         $this->bootstrap = array_merge($this->bootstrap, [
-            'log', 'middleware', 'sync',
+            'log', 'middleware', 'sync', 'card',
         ]);
     }
 
@@ -112,6 +119,12 @@ class BotApplication extends Application
 
         //controllers
         Yii::setAlias('@controllers', $this->basePath  . '/controllers');
+
+        //model
+        Yii::setAlias('@model', $this->basePath  . '/model');
+
+        //service
+        Yii::setAlias('@service', $this->basePath  . '/service');
     }
 
 }
