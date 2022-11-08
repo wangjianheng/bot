@@ -2,17 +2,19 @@
 
 namespace bot\common;
 
+use bot\application\BotApplication;
 use Illuminate\Support\Arr;
 use Swoole\Coroutine;
 use Swoole\Timer;
 use Yii;
-use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
 
 class Sync implements BootstrapInterface
 {
     const EVENT_BEFORE_DELETE = 'before_sync_del';
+
+    const SYNC_KEY = 'sync_key:';
 
     const CRON_TIME = 10000;
 
@@ -25,26 +27,42 @@ class Sync implements BootstrapInterface
 
     /**
      * 存储服务 实现get set就行
-     * 默认就存到变量里了 用起来最方便 什么都可以存 只是受局限MAX_ITEMS
-     * 如果放到reids或则db 回调方法只能是静态函数了
      * @var Sync
      */
     protected static $store;
 
     protected static $storeData = [];
 
+    protected static $deferCall = [
+        [Sync::class, 'del'],
+    ];
+
     public function bootstrap($app)
     {
-        $app->on(Application::EVENT_AFTER_REQUEST, [static::class, 'del']);
-
         Timer::tick(self::CRON_TIME, [self::class, 'cron']);
 
-        static::setStore($this);
+        !static::$store && static::setStore($this);
+
+        bot()->on(BotApplication::EVENT_BEFORE_REQUEST, [Sync::class, 'defer']);
+    }
+
+    public static function defer()
+    {
+        Coroutine::defer(function () {
+            foreach (self::$deferCall as $call) {
+                is_callable($call) and call_user_func($call);
+            }
+        });
     }
 
     public static function setStore($store)
     {
         static::$store = $store;
+    }
+
+    public static function store()
+    {
+        return static::$store;
     }
 
     /**
@@ -85,9 +103,18 @@ class Sync implements BootstrapInterface
      * @param callable $callable 调用
      * @param int $time 存活时间
      */
-    public static function registerCall($key, callable $callable, $time = 0)
+    public static function registerCall($key, array $callable, $time = null)
     {
-        static::$store->set($key, $callable, $time);
+        if (!$key || !is_callable($callable)) {
+            return;
+        }
+
+        static::$store->set(self::SYNC_KEY . $key, $callable, $time);
+    }
+
+    public static function unregisterCall($key)
+    {
+        static::$store->delete(self::SYNC_KEY . $key);
     }
 
     /**
@@ -98,7 +125,7 @@ class Sync implements BootstrapInterface
      */
     public static function call($key, $params)
     {
-        if ($callable = static::$store->get($key)) {
+        if ($callable = static::$store->get(self::SYNC_KEY . $key)) {
             return call_user_func_array($callable, (array) $params);
         }
     }
@@ -110,6 +137,11 @@ class Sync implements BootstrapInterface
      * @return mixed
      */
     public function get($key, $default = null)
+    {
+        return static::cacheGet($key, $default);
+    }
+
+    public static function cacheGet($key, $default = null)
     {
         if (!isset(static::$storeData[$key])) {
             return $default;
@@ -133,12 +165,27 @@ class Sync implements BootstrapInterface
      */
     public function set($key, $val, $time)
     {
+        return static::cacheSet($key, $val, $time);
+    }
+
+    public static function cacheSet($key, $val, $time)
+    {
         if (count(static::$storeData) >= self::MAX_ITEMS) {
             return false;
         }
 
         static::$storeData[$key] = [$val, $time + time()];
         return true;
+    }
+
+    public function delete($key)
+    {
+        static::cacheDel($key);
+    }
+
+    public static function cacheDel($key)
+    {
+        unset(static::$storeData[$key]);
     }
 
     /**
@@ -148,7 +195,7 @@ class Sync implements BootstrapInterface
     {
         static::$storeData = array_filter(static::$storeData, function ($item) {
             list(, $time) = $item;
-            return $time >= time();
+            return (int) $time >= time();
         });
     }
 }

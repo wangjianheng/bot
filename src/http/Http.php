@@ -615,7 +615,7 @@ class Http extends Behavior
         ];
 
         $response = $this->sender(Sender::JOINED_CHANNEL)->setQuery($body)->send(Sender::GET);
-        return Arr::get($response, 'data.items.0', []);
+        return Arr::get($response, 'data.items.0', '');
     }
 
     /**
@@ -884,7 +884,6 @@ class Http extends Behavior
             'setting_times' => $times,
         ];
         $response = $this->sender(Sender::CREATE_INVITE)->setBody($body)->send(Sender::POST);
-
         return Arr::get($response, 'data', []);
     }
 

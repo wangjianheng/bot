@@ -90,7 +90,7 @@ class Card extends Message implements BootstrapInterface
     /**
      * @var array 按钮回调事件（临时存一下）
      */
-    protected $buttonCallBackTmp = [];
+    protected $buttonCallBackTmp;
 
     protected $downSecondCall = [];
 
@@ -123,7 +123,7 @@ class Card extends Message implements BootstrapInterface
 
     /**
      * 标题
-     * @param $content 内容
+     * @param string $content 内容
      * @return $this
      */
     public function header($content)
@@ -244,7 +244,7 @@ class Card extends Message implements BootstrapInterface
         if (count($buttons) > self::BUTTON_MAX_NUM) {
             $buttons = array_chunk($buttons, self::BUTTON_MAX_NUM);
             foreach ($buttons as $button) {
-                $this->push($button);
+                $this->buttons($button);
             }
             return $this;
         }
@@ -267,7 +267,7 @@ class Card extends Message implements BootstrapInterface
         //注册了回调
         $callback = Arr::pull($button, 'callback');
         if (Arr::get($button, 'click') == 'return-val' && is_callable($callback)) {
-            array_push($this->buttonCallBackTmp, $callback);
+            $this->buttonCallBackTmp = $callback;
         }
 
         return $button;
@@ -310,7 +310,7 @@ class Card extends Message implements BootstrapInterface
      * @param string $cover 封面
      * @return $this
      */
-    public function audio($title, $url, $cover)
+    public function audio($title, $url, $cover = '')
     {
         return $this->push([
             'type' => self::TYPE_AUDIO,
@@ -606,8 +606,8 @@ class Card extends Message implements BootstrapInterface
     {
         foreach ($this->cards() as $card) {
             //按钮回调
-            foreach ($card->buttonCallBackTmp as $callback) {
-                Sync::registerCall($newMsg['msg_id'], $callback, $this->buttonTime);
+            if ($card->buttonCallBackTmp) {
+                Sync::registerCall($newMsg['msg_id'], $card->buttonCallBackTmp, $this->buttonTime);
             }
 
             //倒计时回调
@@ -615,6 +615,11 @@ class Card extends Message implements BootstrapInterface
                 Timer::after($time, $callback);
             }
         }
+    }
+
+    public function unregisterCall()
+    {
+        Sync::unregisterCall($this->msgId);
     }
 
     /**

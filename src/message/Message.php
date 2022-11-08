@@ -26,20 +26,29 @@ class Message
 
     const SEND_TARGET = 3;
 
-    protected $items = [];
+    public $items = [];
 
     /**
      * @var string 发送的消息id
      */
-    protected $msgId = null;
+    public $msgId = null;
 
     /**
      * @param int $channel 消息发送渠道
      */
-    protected $channel = null;
+    public $channel = null;
 
     public function __construct($params = null)
     {
+    }
+
+    public static function create($msgid, $channel, $items = [])
+    {
+        $msg = static::instance();
+        $msg->msgId = $msgid;
+        $msg->items = $items;
+        $msg->channel = $channel;
+        return $msg;
     }
 
     /**
@@ -132,6 +141,7 @@ class Message
             return [];
         }
 
+        $this->afterSend(['msg_id' => $this->msgId]);
         return call_user_func_array($handle, [$this->msgId, $this->out(), $properties]);
     }
 
@@ -143,8 +153,8 @@ class Message
     public function delete()
     {
         if (
-            !$msg = $this->msgId ||
-            !$handle = $this->sendChannel('delete', $this->channel)
+            !($msg = $this->msgId) ||
+            !($handle = $this->sendChannel('delete', $this->channel))
         ) {
             return true;
         }
@@ -214,11 +224,6 @@ class Message
         array_push($this->items, $item);
 
         return $this;
-    }
-
-    public function msgid()
-    {
-        return $this->msgId;
     }
 
     public function drop($key)

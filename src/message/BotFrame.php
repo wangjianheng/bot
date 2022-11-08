@@ -38,10 +38,16 @@ class BotFrame extends Frame implements \ArrayAccess
         return Arr::get($this, 'extra.body.value', '');
     }
 
+    public function author($key = null)
+    {
+        $info = Arr::get($this, 'extra.author', []);
+        return Arr::get($info, $key);
+    }
+
     public function user($key = null)
     {
-        $user = Arr::get($this, 'extra.body.user_info', []);
-        return Arr::get($user, $key);
+        $info = Arr::get($this, 'extra.body.user_info', []);
+        return Arr::get($info, $key);
     }
 
     public function send($contents)
@@ -49,6 +55,11 @@ class BotFrame extends Frame implements \ArrayAccess
         if ($this['channel_type'] == self::TYPE_GROUP) {
             return http()->messageCreate($this['target_id'], $contents);
         }
+    }
+
+    public function guild()
+    {
+        return Arr::get($this, 'extra.guild_id');
     }
 
     public function replay($contents)
