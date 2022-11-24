@@ -587,7 +587,7 @@ class Card extends Message implements BootstrapInterface
      * 输出
      * @return string
      */
-    public function out()
+    public function out($json = true)
     {
         $cards = array_map(function ($card) {
             return [
@@ -599,7 +599,7 @@ class Card extends Message implements BootstrapInterface
             ];
         }, $this->cards());
 
-        return json_encode($cards);
+        return $json ? json_encode($cards) : $cards;
     }
 
     public function afterSend($newMsg)
