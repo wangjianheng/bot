@@ -26,27 +26,31 @@ class Request extends Base
 
     public function resolve()
     {
-        //文字走console
-        if (in_array($this->get('type'), [self::TEXT_TYPE, self::KMARKDOWN_TYPE])) {
-            return parent::resolve();
+        $route = $this->router->trans($this);
+
+        if (!current($route)) {
+            $route = parent::resolve();
         }
 
-        //其他事件走router
-        return $this->router->trans($this);
+        return $route;
     }
 
-    /**
-     * 仅console走这个方法
+    /**ddd
      * @return array|void
      */
     public function getParams()
     {
-        $content = $this->get('content');
-        $params = explode(' ', $content);
+        //文字取文字内容
+        if (in_array($this->get('type'), [self::TEXT_TYPE, self::KMARKDOWN_TYPE])) {
+            $content = $this->get('content');
+            $params = explode(' ', $content);
 
-        return array_filter(
-            array_map('trim', $params)
-        );
+            return array_filter(
+                array_map('trim', $params)
+            );
+        }
+
+        return [str_replace('_', '-', $this->requestType())];
     }
 
     /**
@@ -106,6 +110,6 @@ class Request extends Base
             return $this->defaultType;
         }
 
-        return $channel . '/' . $type;
+        return strtolower($channel) . '/' . $type;
     }
 }
